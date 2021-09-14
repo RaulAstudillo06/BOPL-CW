@@ -61,7 +61,7 @@ def bopl_trial(
             # Current best observed objective value
             util_of_current_best_menu = torch.tensor(util_of_historical_best_menus[-1])
 
-            init_batch_id = len(util_of_current_best_menu)
+            init_batch_id = len(util_of_historical_best_menus)
             print("Restarting experiment from available data.")
 
         except:
@@ -76,6 +76,7 @@ def bopl_trial(
                 Y=Y, 
                 true_utility_function=true_utility_function,
                 utility_model=utility_prior_model,
+                menu_size=menu_size,
             )
 
             # Utility of historical best menus
