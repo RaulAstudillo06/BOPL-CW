@@ -236,13 +236,14 @@ def compute_utility_of_best_menu(
     utility_menus_samples = []
 
     for n in range(num_samples):
-        utility_menus_samples.append(torch.combinations(utility_Y_samples[n, :], r=effective_menu_size).max(-1)[0])
+        utility_menus_samples.append(torch.combinations(utility_Y_samples[n, :], r=effective_menu_size).max(-1).values)
     
     expected_utility_menus = torch.stack(utility_menus_samples).mean(0)
-    expected_utility_best_menu = expected_utility_menus.max(-1)[0]
-    #best_menu_id = expected_utility_menus.max(-1)[1]
-    #best_menu_indices = torch.combinations(torch.tensor(range(Y_nondominated.shape[0])), r=effective_menu_size)[best_menu_id]
-    #best_menu = Y_nondominated[best_menu_indices]
-    #print(best_menu)
+    expected_utility_best_menu = expected_utility_menus.max(-1).values
+    best_menu_id = expected_utility_menus.max(-1)[1]
+    best_menu_indices = torch.combinations(torch.tensor(range(Y_nondominated.shape[0])), r=effective_menu_size)[best_menu_id]
+    best_menu = Y_nondominated[best_menu_indices]
+    print("Current best menu:")
+    print(best_menu)
     #utility_best_menu = true_utility_function(best_menu).max()
     return expected_utility_best_menu
