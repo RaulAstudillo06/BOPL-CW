@@ -1,7 +1,5 @@
 import os
 import sys
-import numpy as np
-from numpy.random.mtrand import dirichlet
 import torch
 
 from botorch.settings import debug
@@ -17,12 +15,13 @@ print(script_dir[:-12])
 sys.path.append(script_dir[:-12])
 
 from bopl.experiment_manager import experiment_manager
+from bopl.utils import find_pointwise_optimums, find_true_optimal_menu
 from bopl.utility.utility_model import GenericUtilityModel
 
 
 # Objective function
-input_dim = 6
-output_dim = 4
+input_dim = 5
+output_dim = 3
 
 dtlz1 = DTLZ1(dim=input_dim, num_objectives=output_dim, negate=True)
 
@@ -68,7 +67,7 @@ def get_true_utility_function(seed:int) -> Callable:
 
 
 # Algos
-algo = "EI-UU"
+algo = "MSC-EI-UU"
 algo_params = {}
 
 # Run experiment
@@ -79,19 +78,22 @@ elif len(sys.argv) == 2:
     first_trial = int(sys.argv[1])
     last_trial =  int(sys.argv[1])
 
+menu_size = 3
+problem = "dtlz1_" + str(input_dim) + "_" + str(output_dim) + "_" + str(menu_size)
+
 experiment_manager(
-    problem = "dtlz1",
+    problem = problem,
     get_objective_function=get_objective_function,
     get_true_utility_function=get_true_utility_function,
     utility_prior_model=utility_prior_model,
     input_dim=input_dim,
-    menu_size=6,
+    menu_size=2,
     algo=algo,
     algo_params=algo_params,
     first_trial=first_trial, 
     last_trial=last_trial,
     num_init_evals=2 * (input_dim + 1),
-    num_bo_iter=60,
-    restart=True,
+    num_bo_iter=20 * input_dim,
+    restart=False,
     ignore_failures=False,
 )
