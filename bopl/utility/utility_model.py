@@ -43,9 +43,9 @@ class GenericUtilityModel(UtilityModel):
         super().__init__()
         self._utility_function = utility_function
         self._prior_sampler = prior_sampler
-        self._num_samples = num_samples
+        self.num_samples = num_samples
         self._seed = seed if seed is not None else torch.randint(0, 1000000, (1,)).item()
-        self.register_buffer("posterior_samples", self._prior_sampler(self._num_samples, self._seed)) 
+        self.register_buffer("posterior_samples", self._prior_sampler(self.num_samples, self._seed))
 
     def forward(self, Y: Tensor) -> Tensor:
         return self._utility_function(Y, self.posterior_samples)
